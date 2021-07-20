@@ -1,14 +1,23 @@
-# Blue Marble
-OpenGL Earth Simulation
+# OpenGL: Simulando o Planeta Terra
 
 
-## Motivações
+## 1. Motivações
 
 
-## Tecnologias
+## 2. Tecnologias
+
+- OpenGL 0.0
+
+### 2.1. Dependências
 
 
-## Técnicas de Síntese
+## 3. Técnicas de Computação Gráfica
 
 
-## 
+## 4. Projeto
+
+
+## 5. Considerações Finais
+
+
+## Referências
