@@ -1,0 +1,3 @@
+C:/Users/Gabriel/Documents/EACH-USP/202101/Computação Gráfica/ep_sintese/planeta_terra/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Gabriel/Documents/EACH-USP/202101/Computação Gráfica/ep_sintese/planeta_terra/out/build/x64-Debug/CMakeFiles/PlanetaTerra.dir
+C:/Users/Gabriel/Documents/EACH-USP/202101/Computação Gráfica/ep_sintese/planeta_terra/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

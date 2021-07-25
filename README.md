@@ -7,6 +7,8 @@ A proposta do EP e sua especificação: o que vocês queriam fazer e como fizera
 ### 1.1. Tecnologias
 
 - OpenGL 0.0
+- CMake
+- Visual Studio Community 2019
 
 ### 1.2. Dependências
 
