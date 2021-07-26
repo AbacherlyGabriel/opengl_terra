@@ -1,5 +1,12 @@
 # ninja log v5
 0	631	6489587953944932	CMakeFiles/PlanetaTerra.dir/main.obj	f507c4cc9db5929b
-632	1207	6489587958315489	PlanetaTerra.exe	d203299db141bff8
+811	1054	6489628330522548	PlanetaTerra.exe	63f6f9387ebb0fe0
 0	512	6489589588305387	CMakeFiles/Teste.dir/main.obj	9092446696b10322
 513	997	6489589592335433	Teste.exe	4a0e9ff12df3f929
+1	810	6489628328942493	CMakeFiles/PlanetaTerra.dir/main.cpp.obj	8ffcab966affd628
+1	803	6489629265241944	CMakeFiles/PlanetaTerra.dir/main.cpp.obj	8ffcab966affd628
+804	1154	6489629266861742	PlanetaTerra.exe	e1c347db4c3e0d41
+1	815	6489629538527610	CMakeFiles/PlanetaTerra.dir/main.cpp.obj	8ffcab966affd628
+815	1165	6489629540737542	PlanetaTerra.exe	e1c347db4c3e0d41
+1	807	6489629957885681	CMakeFiles/PlanetaTerra.dir/main.cpp.obj	8ffcab966affd628
+807	1092	6489629959575506	PlanetaTerra.exe	e1c347db4c3e0d41

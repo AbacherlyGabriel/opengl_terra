@@ -12,6 +12,10 @@ A proposta do EP e sua especificação: o que vocês queriam fazer e como fizera
 
 ### 1.2. Dependências
 
+- GLM: OpenGL Mathematics (https://glm.g-truc.net/0.9.9/index.html)
+- GLFW: OpenGl Framework (https://www.glfw.org/)
+- GLEW: OpenGL Extension Wrangler (http://glew.sourceforge.net/)
+- STB: Single File Library (https://github.com/nothings/stb)
 
 ### 1.3. Técnicas de Computação Gráfica
 

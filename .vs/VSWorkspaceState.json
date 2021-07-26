@@ -2,9 +2,17 @@
   "ExpandedNodes": [
     "",
     "\\planeta_terra",
-    "\\planeta_terra\\out",
-    "\\planeta_terra\\out\\build"
+    "\\planeta_terra\\dependencias",
+    "\\planeta_terra\\dependencias\\glew",
+    "\\planeta_terra\\dependencias\\glew\\bin",
+    "\\planeta_terra\\dependencias\\glew\\bin\\Release",
+    "\\planeta_terra\\dependencias\\glew\\bin\\Release\\x64",
+    "\\planeta_terra\\dependencias\\glew\\lib",
+    "\\planeta_terra\\dependencias\\glew\\lib\\Release",
+    "\\planeta_terra\\dependencias\\glew\\lib\\Release\\x64",
+    "\\planeta_terra\\dependencias\\glfw",
+    "\\planeta_terra\\out"
   ],
-  "SelectedNode": "\\planeta_terra\\CMakeLists.txt",
+  "SelectedNode": "\\planeta_terra\\dependencias\\glew\\bin\\Release\\x64\\glewinfo.exe",
   "PreviewInSolutionExplorer": false
 }
