@@ -39,7 +39,7 @@ include CMakeFiles\rules.ninja
 # Utility command for edit_cache
 
 build CMakeFiles\edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\BlueMarble\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
+  COMMAND = cmd.exe /C "cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\27.+Nuvens\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -56,7 +56,15 @@ build cmake_object_order_depends_target_BlueMarble: phony || CMakeFiles\BlueMarb
 
 build CMakeFiles\BlueMarble.dir\main.cpp.obj: CXX_COMPILER__BlueMarble_Debug ..\..\..\main.cpp || cmake_object_order_depends_target_BlueMarble
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  INCLUDES = -I..\..\..\deps\glm -I..\..\..\deps\stb -I..\..\..\deps\glfw\include -I..\..\..\deps\glew\include
+  INCLUDES = -I..\..\..\deps\glm -I..\..\..\deps\glfw\include -I..\..\..\deps\glew\include -I..\..\..\deps\stb
+  OBJECT_DIR = CMakeFiles\BlueMarble.dir
+  OBJECT_FILE_DIR = CMakeFiles\BlueMarble.dir
+  TARGET_COMPILE_PDB = CMakeFiles\BlueMarble.dir\
+  TARGET_PDB = BlueMarble.pdb
+
+build CMakeFiles\BlueMarble.dir\Camera.cpp.obj: CXX_COMPILER__BlueMarble_Debug ..\..\..\Camera.cpp || cmake_object_order_depends_target_BlueMarble
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -I..\..\..\deps\glm -I..\..\..\deps\glfw\include -I..\..\..\deps\glew\include -I..\..\..\deps\stb
   OBJECT_DIR = CMakeFiles\BlueMarble.dir
   OBJECT_FILE_DIR = CMakeFiles\BlueMarble.dir
   TARGET_COMPILE_PDB = CMakeFiles\BlueMarble.dir\
@@ -70,13 +78,13 @@ build CMakeFiles\BlueMarble.dir\main.cpp.obj: CXX_COMPILER__BlueMarble_Debug ..\
 #############################################
 # Link the executable BlueMarble.exe
 
-build BlueMarble.exe: CXX_EXECUTABLE_LINKER__BlueMarble_Debug CMakeFiles\BlueMarble.dir\main.cpp.obj
+build BlueMarble.exe: CXX_EXECUTABLE_LINKER__BlueMarble_Debug CMakeFiles\BlueMarble.dir\main.cpp.obj CMakeFiles\BlueMarble.dir\Camera.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = glfw3.lib  glew32.lib  opengl32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
-  LINK_PATH = -LIBPATH:C:\Users\Raphael\DOCUME~1\Rapha\USP\7-SEME~1\COMPUT~2\Trabalho\BLUEMA~1\deps\glfw\LI15CB~1   -LIBPATH:C:\Users\Raphael\DOCUME~1\Rapha\USP\7-SEME~1\COMPUT~2\Trabalho\BLUEMA~1\deps\glew\lib\Release\x64
+  LINK_PATH = -LIBPATH:C:\Users\Raphael\DOCUME~1\Rapha\USP\7-SEME~1\COMPUT~2\Trabalho\276845~1._NU\deps\glfw\LIB-VC~1   -LIBPATH:C:\Users\Raphael\DOCUME~1\Rapha\USP\7-SEME~1\COMPUT~2\Trabalho\276845~1._NU\deps\glew\lib\Release\x64
   OBJECT_DIR = CMakeFiles\BlueMarble.dir
-  POST_BUILD = cmd.exe /C "cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\BlueMarble\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/deps/glew/bin/Release/x64/glew32.dll" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug/glew32.dll" && cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\BlueMarble\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/shaders/triangle_vert.glsl" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug/shaders/triangle_vert.glsl" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/shaders/triangle_frag.glsl" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug/shaders/triangle_frag.glsl" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/textures/earth_2k.jpg" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug/textures/earth_2k.jpg" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/textures/earth5400x2700.jpg" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug/textures/earth5400x2700.jpg""
+  POST_BUILD = cmd.exe /C "cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\27.+Nuvens\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/deps/glew/bin/Release/x64/glew32.dll" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/glew32.dll" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/shaders/triangle_vert.glsl" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/shaders/triangle_vert.glsl" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/shaders/triangle_frag.glsl" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/shaders/triangle_frag.glsl" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/textures/earth_2k.jpg" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/textures/earth_2k.jpg" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/textures/earth_clouds_2k.jpg" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/textures/earth_clouds_2k.jpg" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/textures/earth5400x2700.jpg" "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/textures/earth5400x2700.jpg""
   PRE_LINK = cd .
   TARGET_COMPILE_PDB = CMakeFiles\BlueMarble.dir\
   TARGET_FILE = BlueMarble.exe
@@ -84,85 +92,85 @@ build BlueMarble.exe: CXX_EXECUTABLE_LINKER__BlueMarble_Debug CMakeFiles\BlueMar
   TARGET_PDB = BlueMarble.pdb
 
 # =============================================================================
-# Object build statements for EXECUTABLE target Vectors
+# Object build statements for EXECUTABLE target Vetores
 
 
 #############################################
-# Order-only phony target for Vectors
+# Order-only phony target for Vetores
 
-build cmake_object_order_depends_target_Vectors: phony || CMakeFiles\Vectors.dir
+build cmake_object_order_depends_target_Vetores: phony || CMakeFiles\Vetores.dir
 
-build CMakeFiles\Vectors.dir\Vectors.cpp.obj: CXX_COMPILER__Vectors_Debug ..\..\..\Vectors.cpp || cmake_object_order_depends_target_Vectors
+build CMakeFiles\Vetores.dir\Vetores.cpp.obj: CXX_COMPILER__Vetores_Debug ..\..\..\Vetores.cpp || cmake_object_order_depends_target_Vetores
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -I..\..\..\deps\glm
-  OBJECT_DIR = CMakeFiles\Vectors.dir
-  OBJECT_FILE_DIR = CMakeFiles\Vectors.dir
-  TARGET_COMPILE_PDB = CMakeFiles\Vectors.dir\
-  TARGET_PDB = Vectors.pdb
+  OBJECT_DIR = CMakeFiles\Vetores.dir
+  OBJECT_FILE_DIR = CMakeFiles\Vetores.dir
+  TARGET_COMPILE_PDB = CMakeFiles\Vetores.dir\
+  TARGET_PDB = Vetores.pdb
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target Vectors
+# Link build statements for EXECUTABLE target Vetores
 
 
 #############################################
-# Link the executable Vectors.exe
+# Link the executable Vetores.exe
 
-build Vectors.exe: CXX_EXECUTABLE_LINKER__Vectors_Debug CMakeFiles\Vectors.dir\Vectors.cpp.obj
+build Vetores.exe: CXX_EXECUTABLE_LINKER__Vetores_Debug CMakeFiles\Vetores.dir\Vetores.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
-  OBJECT_DIR = CMakeFiles\Vectors.dir
+  OBJECT_DIR = CMakeFiles\Vetores.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\Vectors.dir\
-  TARGET_FILE = Vectors.exe
-  TARGET_IMPLIB = Vectors.lib
-  TARGET_PDB = Vectors.pdb
+  TARGET_COMPILE_PDB = CMakeFiles\Vetores.dir\
+  TARGET_FILE = Vetores.exe
+  TARGET_IMPLIB = Vetores.lib
+  TARGET_PDB = Vetores.pdb
 
 # =============================================================================
-# Object build statements for EXECUTABLE target Matrices
+# Object build statements for EXECUTABLE target Matrizes
 
 
 #############################################
-# Order-only phony target for Matrices
+# Order-only phony target for Matrizes
 
-build cmake_object_order_depends_target_Matrices: phony || CMakeFiles\Matrices.dir
+build cmake_object_order_depends_target_Matrizes: phony || CMakeFiles\Matrizes.dir
 
-build CMakeFiles\Matrices.dir\Matrices.cpp.obj: CXX_COMPILER__Matrices_Debug ..\..\..\Matrices.cpp || cmake_object_order_depends_target_Matrices
+build CMakeFiles\Matrizes.dir\Matrizes.cpp.obj: CXX_COMPILER__Matrizes_Debug ..\..\..\Matrizes.cpp || cmake_object_order_depends_target_Matrizes
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -I..\..\..\deps\glm
-  OBJECT_DIR = CMakeFiles\Matrices.dir
-  OBJECT_FILE_DIR = CMakeFiles\Matrices.dir
-  TARGET_COMPILE_PDB = CMakeFiles\Matrices.dir\
-  TARGET_PDB = Matrices.pdb
+  OBJECT_DIR = CMakeFiles\Matrizes.dir
+  OBJECT_FILE_DIR = CMakeFiles\Matrizes.dir
+  TARGET_COMPILE_PDB = CMakeFiles\Matrizes.dir\
+  TARGET_PDB = Matrizes.pdb
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target Matrices
+# Link build statements for EXECUTABLE target Matrizes
 
 
 #############################################
-# Link the executable Matrices.exe
+# Link the executable Matrizes.exe
 
-build Matrices.exe: CXX_EXECUTABLE_LINKER__Matrices_Debug CMakeFiles\Matrices.dir\Matrices.cpp.obj
+build Matrizes.exe: CXX_EXECUTABLE_LINKER__Matrizes_Debug CMakeFiles\Matrizes.dir\Matrizes.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
-  OBJECT_DIR = CMakeFiles\Matrices.dir
+  OBJECT_DIR = CMakeFiles\Matrizes.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\Matrices.dir\
-  TARGET_FILE = Matrices.exe
-  TARGET_IMPLIB = Matrices.lib
-  TARGET_PDB = Matrices.pdb
+  TARGET_COMPILE_PDB = CMakeFiles\Matrizes.dir\
+  TARGET_FILE = Matrizes.exe
+  TARGET_IMPLIB = Matrizes.lib
+  TARGET_PDB = Matrizes.pdb
 
 
 #############################################
 # Utility command for rebuild_cache
 
 build CMakeFiles\rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\BlueMarble\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --regenerate-during-build -S"C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\BlueMarble" -B"C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\BlueMarble\out\build\x64-Debug""
+  COMMAND = cmd.exe /C "cd /D "C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\27.+Nuvens\out\build\x64-Debug" && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --regenerate-during-build -S"C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\27.+Nuvens" -B"C:\Users\Raphael\Documents\Rapha\USP\7 - SEMESTRE\Computacao Grafica\Trabalho\27.+Nuvens\out\build\x64-Debug""
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -174,9 +182,9 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 
 build BlueMarble: phony BlueMarble.exe
 
-build Matrices: phony Matrices.exe
+build Matrizes: phony Matrizes.exe
 
-build Vectors: phony Vectors.exe
+build Vetores: phony Vetores.exe
 
 # =============================================================================
 # Folder targets.
@@ -184,9 +192,9 @@ build Vectors: phony Vectors.exe
 # =============================================================================
 
 #############################################
-# Folder: C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug
+# Folder: C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug
 
-build all: phony BlueMarble.exe Vectors.exe Matrices.exe
+build all: phony BlueMarble.exe Vetores.exe Matrizes.exe
 
 # =============================================================================
 # Built-in targets

@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble
+# Install script for directory: C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/BlueMarble/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

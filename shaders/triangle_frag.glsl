@@ -1,15 +1,64 @@
 #version 330 core
 
+in vec3 Position;
+in vec3 Normal;
 in vec3 Color;
 in vec2 UV;
 
-uniform sampler2D TextureSampler;
+uniform vec3 LightDirection;
+uniform float LightIntensity;
+
+uniform float Time;
+
+uniform sampler2D EarthTexture;
+uniform sampler2D CloudsTexture;
+
+uniform vec2 CloudsRotationSpeed = vec2(0.008, 0.00);
 
 out vec4 OutColor;
 
-void main() {
-	vec3 TextureColor = texture(TextureSampler, UV).rgb;
-	OutColor = vec4(TextureColor, 1.0);
-	//vec3 FinalColor = Color * TextureColor;
-	//OutColor = vec4(FinalColor, 1.0);
+void main()
+{
+	// Renormalizar a normal: a interpolação do vertex shader para o fragment shader é linear, assim evitamos problemas
+	vec3 N = normalize(Normal);
+
+	// Inverter a direção da luz para calcular o vetor L (Lambertiano)
+	vec3 L = -normalize(LightDirection);
+	
+	// Dot - produto escalar entre dois vetores unitários é equivalente ao cosseno entre esses vetores
+	// Quanto maior o ângulo entre os vetores, menor é o cosseno entre eles
+	float Lambertian = dot(N, L);
+
+	// O clamp vai manter o valor do Lambertiano entre 0 e 1
+	// Se o valor for negativa isso quer dizer que estamos virados pro lado
+	// oposto a direção da luz.
+	Lambertian = clamp(Lambertian, 0.0, 1.0);
+
+	float SpecularReflection = 0.0;
+	if (Lambertian > 0.0)
+	{
+	    // Vetor V
+		// Câmera olhando constantemente para o ponto (0,0) com z negativo (para dentro da tela)
+		vec3 ViewDirection = -normalize(Position);
+
+		// Vetor R que determina a direção da reflexão
+		vec3 ReflectionDirection = reflect(-L, N);
+
+		// Termo especular: (R . V) ^ alpha - produto escalar dos vetores R e V
+		SpecularReflection = pow(dot(ReflectionDirection, ViewDirection), 50.0);
+
+		// Limita o valor da reflexão especular a números positivos
+		SpecularReflection = max(0.0, SpecularReflection);
+	}
+
+	vec3 EarthSurfaceColor = texture(EarthTexture, UV).rgb;
+	vec3 CloudColor = texture(CloudsTexture, UV + Time * CloudsRotationSpeed).rgb;
+
+	vec3 SurfaceColor = EarthSurfaceColor + CloudColor;
+
+	// A reflexão difusa é o produto do lambertiano com a intensidade da luz e a cor da textura
+	// Simplificação da Equação de Phong
+	vec3 DiffuseReflection = Lambertian * LightIntensity * SurfaceColor + SpecularReflection;
+
+	OutColor = vec4(DiffuseReflection, 1.0);
 }

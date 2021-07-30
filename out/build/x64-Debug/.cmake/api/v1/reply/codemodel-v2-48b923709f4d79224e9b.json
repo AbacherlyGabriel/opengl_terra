@@ -1,0 +1,77 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "BlueMarble",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "BlueMarble::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-BlueMarble-Debug-d480b81da1884f36a6a7.json",
+					"name" : "BlueMarble",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Matrizes::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Matrizes-Debug-a00ce574f35e0383cc7e.json",
+					"name" : "Matrizes",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Vetores::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Vetores-Debug-7dad082fd84c48a05afb.json",
+					"name" : "Vetores",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug",
+		"source" : "C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}
