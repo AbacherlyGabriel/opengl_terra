@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cassert>
 #include <array>
+#include <vector>
 
 // Não incluímos o GL.h pois nele constam apenas as funções do OpenGL 1.0 ou 1.1
 // Por isso utilizamos o GLEW (Extension Wrangler) - funções mais novas já incluindo as legadas automaticamente
@@ -189,6 +190,236 @@ struct Vertex {
 	glm::vec2 UV;
 };
 
+// Função para carregar toda a geometria desenhada, responsável por encapsular os binds e unbinds centralizando a chamada
+GLuint LoadGeometry() {
+	// Definição de um triângulo em coordenadas normalizadas (array com 3 coordenadas/elementos de tipo vec3)
+	std::array<Vertex, 6> Quad = {
+		Vertex { glm::vec3{ -1.0f, -1.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f } },
+		Vertex { glm::vec3{  1.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f } },
+		Vertex { glm::vec3{  1.0f,  1.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f } },
+		Vertex { glm::vec3{ -1.0f,  1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f } }
+		//Vertex { glm::vec3{ -1.0f,  1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f } },
+		//Vertex { glm::vec3{  1.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f } },
+	}; // Armazenado na RAM
+
+	// Definir lista de elementos que formam os triângulos
+	std::array<glm::ivec3, 2> Indices = {
+		glm::ivec3{ 0, 1, 3},
+		glm::ivec3{ 3, 1, 2}
+	};
+
+	// Não há mais necessidade de calcular a MVP manualmente para definir a câmera. Invés disso, basta instanciar o objeto
+	// 	   da câmera aérea
+	//glm::vec3 Eye{ 0, 0, 5 };
+	//glm::vec3 Center{ 0, 0, 0 };
+	//glm::vec3 Up{ 0, 1, 0 };
+	//glm::mat4 ViewMatrix = glm::lookAt(Eye, Center, Up);
+
+	//constexpr float FoV = glm::radians(45.0f);
+	//const float AspectRatio = Width / Height;
+	//const float Near = 0.001f;
+	//const float Far = 1000.0f;
+	//glm::mat4 ProjectionMatrix = glm::perspective(FoV, AspectRatio, Near, Far);
+
+	// -------------------------
+	// 	   A MVP agora passar a ser calculada no loop de eventos, para que a câmera (e a perspectiva) seja atualizada
+	// 	   conforme as interações
+	//glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix; // Model View Projection Matrix
+
+	// Aplicar a MVP nos vértices do triângulo
+	// 	   Ao atualizarmos o vertex shader a pipeline gráfica realizará esses cálculos de maneira otimizada, já
+	// 	   dividindo pela coordenada homogênea, simplificando a programação da aplicação
+	//for (Vertex& Vertex : Triangle) {
+	//	glm::vec4 ProjectedVertex = MVP * glm::vec4{ Vertex.Position, 1.0f }; // Construindo um vec4 a partir de um vec3,
+																			  // acrescentando estaticamente apenas a 
+																			  //  última coordenada (w)
+	//	ProjectedVertex /= ProjectedVertex.w; // Divide todas as coordenadas do vértice projetado pela componente w, 
+											  // para que w se torne 1 e os demais valores fiquem 'normalizados'
+	//	Vertex.Position = ProjectedVertex; // Altera-se por fim a referência do vértice do triângulo
+	//}
+
+	// Copiar vértices do triângulo para a memória da GPU
+	GLuint VertexBuffer; // Buffer de vértices - identificador do VBO - Vertex Buffer Object
+	GLuint ElementBuffer = 0; // Solicitar para o OpenGL gerar o identificador do EBO - Element Buffer Object
+
+	// Pedir para o OpenGL gerar o identificador do VBO e do EBO
+	glGenBuffers(1, &VertexBuffer); // Qtd e endereço de quais buffers serão inicializados
+	glGenBuffers(1, &ElementBuffer);
+
+	// Ativar o VertexBuffer e o Element Buffer como sendo os buffers para onde copiaremos os dados do triângulo
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+
+	// Copiar os dados para a memória de vídeo
+	//	Recebe um alvo, uma constante que identifica o tipo de estrutura utilizada para armazenamento do buffer,
+	//	um tamanho em bytes que o buffer irá administrar. Como definimos um array é possível utilizar a função sizeof()
+	//	ponteiro para a estrutura de dados bufferizados. Utilizada a função data() para retornar o ponteiro
+	//	recebe um caso de uso - olhar flags na documentação para maiores informações
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Quad), Quad.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices.data(), GL_STATIC_DRAW);
+
+	// Gerar o Vertex Array Object - VAO
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+
+	// Habilitar o VAO
+	glBindVertexArray(VAO);
+
+	// Ativa o atributo de vértice para o array. O parâmetro 0 representa o índice do layout do shader ativo
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	// Ativa o buffer VertexBuffer e o ElementBuffer para serem utilizados no contexto OpenGL 
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+
+	// Informa ao OpenGL onde os vértices se encontram dentro do VertexBuffer. Como o array Triangle é contíguo
+	// em memória, basta apenas dizer quantos vértices serão utilizados para desenhar o triângulo
+	//  0 / 1 é o índice habilitado, deve coincidir com o especificado na chamada à função glEnableVertexAttribArray()
+	//	3 é a quantidade de vértices da estrutura de dados (vec3)
+	//	GL_FLOAT é o tipo de dados 
+	//  GL_FALSE / GL_TRUE para informar se os atributos estão normalizados ou não 
+	//	stride - tamanho do Vertex (struct) que definimos
+	//	offset - para position é nulo, para color é calculado. O cast é necessário para compatibilizar o retorno
+	//		     do método offsetof com o parâmetro recebido pela função glVertexAttribPointer
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, Color)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, UV)));
+
+	glBindVertexArray(0); // Desabilita o VAO e retorna o estado anterior do processamento pelo OpenGL
+
+	return VAO;	
+}
+
+// Função para gerar vértices da esfera
+// A equação para cálculo dos vértices é expressa por:
+// x = x_0 + r sinTheta cosPhi
+// y = y_0 + r sinTheta sinPhi
+// z = z_0 + r cosTheta
+// * Como podemos utilizar a MVP para transladar, rotacionar ou escalar nossa geometria, podemos simplificar a equação
+//  gerando com origem em (0,0,0) e utilizando raio = 1
+void GenerateSphereMesh(GLuint Resolution, std::vector<Vertex>& Vertices) {
+	Vertices.clear(); // Apenas garantindo a inicialização correta
+
+	constexpr float Pi = glm::pi<float>();
+	constexpr float TwoPi = glm::two_pi<float>();
+	const float InvResolution = 1.0f / static_cast<float>(Resolution - 1); // Para não cair fora do array de resolução
+
+	for (GLuint UIndex = 0; UIndex < Resolution; ++UIndex) {
+		const float U = UIndex * InvResolution; // Obtemos um número entre 0 (lado esquerdo) e 1 (lado direito) - coord U
+		const float Theta = glm::mix(0.0f, Pi, U); // Interpolação linear para obter um Theta entre 0 e PI
+
+		for (GLuint VIndex = 0; VIndex < Resolution; ++VIndex) {
+			const float V = VIndex * InvResolution; // Obtemos um número entre 0 (lado esquerdo) e 1 (lado direito) - coord V
+			const float Phi = glm::mix(0.0f, TwoPi, U); // Interpolação linear para obter um Theta entre 0 e 2PI
+
+			glm::vec3 VertexPosition = {
+				glm::sin(Theta) * glm::cos(Phi),
+				glm::sin(Theta) * glm::sin(Phi),
+				glm::cos(Theta)
+			};
+
+			Vertex Vertex{
+				VertexPosition,
+				glm::vec3{ 1.0f, 1.0f, 1.0f }, // Branco, mas a cor não está sendo utilizada no momento
+				glm::vec2{ U, V }
+			};
+
+			Vertices.push_back(Vertex); // Carrega no array enviado pelo parâmetro
+		}
+	}
+}
+
+class FlyCamera {
+public: 
+	// Função que permite o movimento frente/trás da câmera
+	void MoveForward(float Amount) { // Amount = deslocamento de um frame
+		Location += glm::normalize(Direction) * Amount * Speed; // boa prática: normalização vetorial
+	}
+
+	// Função que permite o movimento direita/esquerda da câmera
+	void MoveRight(float Amount) {
+		glm::vec3 Right = glm::normalize(glm::cross(Direction, Up)); // boa prática: normalização
+		Location += Right * Amount * Speed;
+	}
+
+	// Função para rotação da câmera utilizando o mouse (sobre os eixos y e x)
+	void Look(float Yaw, float Pitch) {
+		Yaw *= Sensitivity;
+		Pitch *= Sensitivity;
+
+		const glm::vec3 Right = glm::normalize(glm::cross(Direction, Up));
+		const glm::mat4 IdentityMatrix = glm::identity<glm::mat4>();
+
+		glm::mat4 YawRotation = glm::rotate(IdentityMatrix, glm::radians(Yaw), Up);
+		glm::mat4 PitchRotation = glm::rotate(IdentityMatrix, glm::radians(Pitch), Right);
+
+		Up = PitchRotation * glm::vec4{ Up, 0.0f };
+		Direction = YawRotation * PitchRotation * glm::vec4{ Direction, 0.0f };
+	}
+
+	// Função que retorna a MVP
+	glm::mat4 GetViewProjection() const {
+		glm::mat4 View = glm::lookAt(Location, Location + Direction, Up);
+		glm::mat4 Projection = glm::perspective(FieldOfView, AspectRatio, Near, Far);
+
+		return Projection * View;
+	}
+
+	// Parâmetros de interatividade
+	float Speed = 5.0f;
+	float Sensitivity = 0.1f;
+
+	// Definição da Matriz de View
+	glm::vec3 Location{ 0.0f, 0.0f, 5.0f };
+	glm::vec3 Direction{ 0.0f, 0.0f, -1.0f };
+	glm::vec3 Up{ 0.0f, 1.0f, 0.0f };
+
+	// Definição da Matriz Projection
+	float FieldOfView = glm::radians(45.0f);
+	float AspectRatio = Width / Height;
+	float Near = 0.01f;
+	float Far = 1000.0f;
+};
+
+FlyCamera Camera;					  // Instância do objeto câmera móvel (aérea)
+bool bEnableMouseMovement = false;    // Booleano para controle da ação do mouse via cursor
+glm::vec2 PreviousCursor{ 0.0, 0.0 }; // Para delta do cursor do mouse
+
+// Função callback para tratamento de eventos com clique do mouse
+void MouseButtonCallback(GLFWwindow* Window, int Button, int Action, int Modifiers) {
+	if (Button == GLFW_MOUSE_BUTTON_LEFT) {
+		if (Action == GLFW_PRESS) { // Ativa a ação do cursor do mouse com clique do botão esquerdo do mouse
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Cursor desaparece durante o clique
+
+			double X, Y;
+			glfwGetCursorPos(Window, &X, &Y);
+
+			PreviousCursor = glm::vec2{ X, Y };
+
+			bEnableMouseMovement = true;
+		}
+		if (Action == GLFW_RELEASE) {// Desativa a ação do cursor do mouse ao soltar o botão esquerdo do mouse
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); // Cursor retorna após soltar o botão
+			
+			bEnableMouseMovement = false;
+		}
+	}
+}
+
+// Função callback para tratamento de eventos com o movimento do cursor do mouse
+void MouseMotionCallback(GLFWwindow* Window, double X, double Y) {
+	if (bEnableMouseMovement) {
+		glm::vec2 CurrentCursor{ X, Y };
+		glm::vec2 DeltaCursor = CurrentCursor - PreviousCursor;
+
+		Camera.Look(DeltaCursor.x, DeltaCursor.y);
+
+		PreviousCursor = CurrentCursor;
+	}
+}
+
 int main() {
 
 	assert(glfwInit() == GLFW_TRUE); // Caso dê problema de inicialização com a biblioteca GLFW será sinalizado com um false
@@ -198,10 +429,17 @@ int main() {
 	//	contexto, caso se deseje compartilhar a exibição
 	GLFWwindow* Window = glfwCreateWindow(Width, Height, "Blue Marble", nullptr, nullptr);
 	assert(Window); // Testa se deu certo de criar a janela - se o ponteiro for nulo falhará
+
+	// Cadastrar as callbacks no GLFW
+	glfwSetMouseButtonCallback(Window, MouseButtonCallback);
+	glfwSetCursorPosCallback(Window, MouseMotionCallback);
 	
 	// Ativa o contexto criado na janela Window:
 	//	Associa um objeto GLFW a um contexto, para que o GLEW possa inicializar com referência para esse contexto
 	glfwMakeContextCurrent(Window); 
+
+	// Habilita ou desabilita o V-Sync
+	glfwSwapInterval(1);
 
 	// Inicializar a biblioteca GLEW (deve ser criada após a janela, pois é necessário um contexto de 
 	//	OpenGL para que a API do OpenGL possa apontar)
@@ -222,70 +460,36 @@ int main() {
 	std::cout << std::endl;
 
 	GLuint ProgramId = LoadShaders("shaders/triangle_vert.glsl", "shaders/triangle_frag.glsl");
-	// GLuint TextureId = LoadTexture("textures/earth_2k.jpg");
+	//GLuint TextureId = LoadTexture("textures/earth_2k.jpg");
 	GLuint TextureId = LoadTexture("textures/earth5400x2700.jpg");
+
+	GLuint QuadVAO = LoadGeometry();
 	
-	// Definição de um triângulo em coordenadas normalizadas (array com 3 coordenadas/elementos de tipo vec3)
-	std::array<Vertex, 6> Quad = { 
-		Vertex { glm::vec3{ -1.0f, -1.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f } },
-		Vertex { glm::vec3{  1.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f } },
-		Vertex { glm::vec3{ -1.0f,  1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f } },
-		Vertex { glm::vec3{ -1.0f,  1.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f } },
-		Vertex { glm::vec3{  1.0f, -1.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f } },
-		Vertex { glm::vec3{  1.0f,  1.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f } }
-	}; // Armazenado na RAM
-
-	// MVP realizada manualmente nesse momento, para aprendizado, depois usaremos shaders para sua otimização na GPU
+	// Model Matrix - identidade
 	glm::mat4 ModelMatrix = glm::identity<glm::mat4>(); 
-
-	glm::vec3 Eye{ 0, 0, 5 };
-	glm::vec3 Center{ 0, 0, 0 };
-	glm::vec3 Up{ 0, 1, 0 };
-	glm::mat4 ViewMatrix = glm::lookAt(Eye, Center, Up);
-
-	constexpr float FoV = glm::radians(45.0f);
-	const float AspectRatio = Width / Height;
-	const float Near = 0.001f;
-	const float Far = 1000.0f;
-	glm::mat4 ProjectionMatrix = glm::perspective(FoV, AspectRatio, Near, Far);
-
-	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix; // Model View Projection Matrix
-
-	// Aplicar a MVP nos vértices do triângulo
-	// 	   Ao atualizarmos o vertex shader a pipeline gráfica realizará esses cálculos de maneira otimizada, já
-	// 	   dividindo pela coordenada homogênea, simplificando a programação da aplicação
-	//for (Vertex& Vertex : Triangle) {
-	//	glm::vec4 ProjectedVertex = MVP * glm::vec4{ Vertex.Position, 1.0f }; // Construindo um vec4 a partir de um vec3,
-																			  // acrescentando estaticamente apenas a 
-																			  //  última coordenada (w)
-	//	ProjectedVertex /= ProjectedVertex.w; // Divide todas as coordenadas do vértice projetado pela componente w, 
-											  // para que w se torne 1 e os demais valores fiquem 'normalizados'
-	//	Vertex.Position = ProjectedVertex; // Altera-se por fim a referência do vértice do triângulo
-	//}
-
-	// Copiar vértices do triângulo para a memória da GPU
-	GLuint VertexBuffer; // Buffer de vértices
-
-	// Pedir para o OpenGL gerar o identificador do VertexBuffer
-	glGenBuffers(1, &VertexBuffer); // Qtd e endereço de quais buffers serão inicializados
-
-	// Ativar o VertecBuffer como sendo o buffer para onde vamos copiar os dados do triângulo
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-
-	// Copiar os dados para a memória de vídeo
-	//	Recebe um alvo, uma constante que identifica o tipo de estrutura utilizada para armazenamento do buffer
-	//	um tamanho em bytes que o buffer irá administrar. Como definimos um array é possível utilizar a função sizeof()
-	//	ponteiro para a estrutura de dados bufferizados. Utilizada a função data() para retornar o ponteiro
-	//	recebe um caso de uso - olhar flags na documentação para maiores informações
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Quad), Quad.data(), GL_STATIC_DRAW);
 
 	// Ter em mente que o OpenGL é uma máquina de estados (quando ativarmos algo, essa coisa permanecerá ativa por padrão)
 	// Definir a cor do fundo (isso é um estado, o driver armazenará essa informação:
 	//	Sempre que precisarmos retomar essa informação, limparmos o framebuffer, etc, essa estado será devidamente restaurado)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // RGBAlpha
 
+	// Armazenamento do frame anterior
+	double PreviousTime = glfwGetTime();
+
+	// Otimização de processamento: habilitar o Back Face Culling - não renderiza a face traseira dos objetos
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 	// Entra no loop de eventos da aplicação
 	while (!glfwWindowShouldClose(Window)) { // Condição de parada, verifica se a janela foi fechada
+
+		// Calcula o Delta Time para suavização da movimentação da câmera
+		double CurrentTime = glfwGetTime();
+		double DeltaTime = CurrentTime - PreviousTime;
+
+		if (DeltaTime > 0.0) {
+			PreviousTime = CurrentTime;
+		}
 
 		// glClear via limpar o framebuffer. GL_COLOR_BUFFER_BIT diz para limpar (preencher) o buffer de cor -> esse 
 		//	preenchimento será realizado de acordo com a última cor configurada via glClearColor
@@ -296,9 +500,13 @@ int main() {
 		// Ativa o programa de shader
 		glUseProgram(ProgramId);
 
+		// Obtenção da MVP por meio do objeto FlyCamera
+		glm::mat4 ViewProjectionMatrix = Camera.GetViewProjection();
+		glm::mat4 ModelViewProjection = ViewProjectionMatrix * ModelMatrix;
+
 		// Recupera a localização calculada pelo uniforme do Vertex Shader utilizando a ModelViewProjection
 		GLint ModelViewProjectionLoc = glGetUniformLocation(ProgramId, "ModelViewProjection");
-		glUniformMatrix4fv(ModelViewProjectionLoc, 1, GL_FALSE, glm::value_ptr(MVP));
+		glUniformMatrix4fv(ModelViewProjectionLoc, 1, GL_FALSE, glm::value_ptr(ModelViewProjection));
 
 		// Ativação e endereçamento da textura para os shaders
 		glActiveTexture(GL_TEXTURE0);
@@ -307,44 +515,30 @@ int main() {
 		GLint TextureSamplerLoc = glGetUniformLocation(ProgramId, "TextureSampler");
 		glUniform1i(TextureSamplerLoc, 0); // Em que 0 está identificando o ID do uniforme (GL_TEXTURE0)
 
-		// Ativa o atributo de vértice para o array. O parâmetro 0 representa o índice do layout do shader ativo
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-
-		// Ativa o buffer VertexBuffer para ser utilizado no contexto OpenGL 
-		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-
-		// Informa ao OpenGL onde os vértices se encontram dentro do VertexBuffer. Como o array Triangle é contíguo
-		// em memória, basta apenas dizer quantos vértices serão utilizados para desenhar o triângulo
-		//  0 / 1 é o índice habilitado, deve coincidir com o especificado na chamada à função glEnableVertexAttribArray()
-		//	3 é a quantidade de vértices da estrutura de dados (vec3)
-		//	GL_FLOAT é o tipo de dados 
-		//  GL_FALSE / GL_TRUE para informar se os atributos estão normalizados ou não 
-		//	stride - tamanho do Vertex (struct) que definimos
-		//	offset - para position é nulo, para color é calculado. O cast é necessário para compatibilizar o retorno
-		//		     do método offsetof com o parâmetro recebido pela função glVertexAttribPointer
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, Color)));
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, UV)));
+		glBindVertexArray(QuadVAO);
 
 		// Desenha em tela de acordo com os arrays atrelados ao buffer de dados (VertexBuffer), interpretando-os como 
 		// coordenadas normalizadas. Especificamos o tipo pela constante do OpenGL (triângulos), dizemos qual é o ponto de 
 		// origem (0) e especificamos a quantidade de vértices que a estrutura possui (3)
-		glDrawArrays(GL_TRIANGLES, 0, Quad.size()); 
+		//glDrawArrays(GL_TRIANGLES, 0, Quad.size()); 
+
+		// Utiliza o EBO para desenhar na tela de acordo com os índices
+		// Índices.size() retorna 2 por ser um array, sendo multiplicado por 3 dado que a geometria é triangular para 
+		//	resultar a quantidade de vértices correta para realização da chamada
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 		// Boa prática em OpenGL: como ele se comporta como uma máquina de estados, após habilitar o buffer, 
 		//	definir um contexto e desenhar coisas em tela, reverter o que foi criado para que as próximas construções
 		//	em tela sejam organizadas, novos binds rastreáveis e, em suma, o comportamento sistêmico seja controlado e 
 		//	previsível. 
 		// Portanto, para reverter o estado criado:
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glDisableVertexAttribArray(0);
+		//glDisableVertexAttribArray(1);
+		//glDisableVertexAttribArray(2);
 
-		// Desabilita o programa ativo
-		glUseProgram(0);
+		glBindVertexArray(0); // Desabilita o VAO
+		glUseProgram(0); // Desabilita o programa ativo
 		
 		// Processa todos os eventos da fila de eventos do GLFW
 		//	podem ser estímulos do teclado, mouse, gamepad, etc
@@ -356,9 +550,20 @@ int main() {
 		//	Vale mencionar, portanto, que o tamanho da janela que estipulamos (valor das variáveis Width e Height)
 		//	influencia na quantidade de memória RAM e de vídeo que nossa aplicação utilizará
 		glfwSwapBuffers(Window);
+
+		// Após desenhar os frames anteriores, processar os Inputs do teclado
+		if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
+			Camera.MoveForward(1.0f * DeltaTime); // Amount passada nos parâmetros
+		if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
+			Camera.MoveForward(-1.0f * DeltaTime); 
+		if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
+			Camera.MoveRight(1.0f * DeltaTime); // Amount passada nos parâmetros
+		if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
+			Camera.MoveRight(-1.0f * DeltaTime);
 	}
 
-	glDeleteBuffers(1, &VertexBuffer); // Desaloca (1) VertexBuffer
+	//glDeleteBuffers(1, &VertexBuffer); // Desaloca (1) VertexBuffer
+	glDeleteVertexArrays(1, &QuadVAO); // Desaloca VAO
 	glfwTerminate(); // Encerra a biblioteca GLFW
 
 	return 0;
