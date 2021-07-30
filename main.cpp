@@ -15,8 +15,8 @@
 #include <stb_image.h>
 
 // Constantes que determinam o tamanho da janela de contexto do GLFW
-const int Width = 800;
-const int Height = 600;
+int Width = 800;
+int Height = 600;
 
 // Função para leitura de arquivos
 std::string ReadFile(const char* FilePath) {
@@ -167,7 +167,8 @@ GLuint LoadTexture(const char* TextureFile) {
 
 	// Aplicação de filtro de magnificação e minificação
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Linear para suavizar granulação com mais zoom
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_MIPMAP); // Mipmap para contornar aliasing da distância
+	// Mipmap para contornar aliasing da distância
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	// Configurar o Texture Wrapping
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Extrapolações das coordenadas normalizadas da img tex
@@ -299,8 +300,9 @@ GLuint LoadGeometry() {
 // z = z_0 + r cosTheta
 // * Como podemos utilizar a MVP para transladar, rotacionar ou escalar nossa geometria, podemos simplificar a equação
 //  gerando com origem em (0,0,0) e utilizando raio = 1
-void GenerateSphereMesh(GLuint Resolution, std::vector<Vertex>& Vertices) {
+void GenerateSphereMesh(GLuint Resolution, std::vector<Vertex>& Vertices, std::vector<glm::ivec3>& Indices) {
 	Vertices.clear(); // Apenas garantindo a inicialização correta
+	Indices.clear();
 
 	constexpr float Pi = glm::pi<float>();
 	constexpr float TwoPi = glm::two_pi<float>();
@@ -308,11 +310,11 @@ void GenerateSphereMesh(GLuint Resolution, std::vector<Vertex>& Vertices) {
 
 	for (GLuint UIndex = 0; UIndex < Resolution; ++UIndex) {
 		const float U = UIndex * InvResolution; // Obtemos um número entre 0 (lado esquerdo) e 1 (lado direito) - coord U
-		const float Theta = glm::mix(0.0f, Pi, U); // Interpolação linear para obter um Theta entre 0 e PI
+		const float Theta = glm::mix(0.0f, Pi, static_cast<float>(U)); // Interpolação linear para obter um Theta entre 0 e PI
 
 		for (GLuint VIndex = 0; VIndex < Resolution; ++VIndex) {
 			const float V = VIndex * InvResolution; // Obtemos um número entre 0 (lado esquerdo) e 1 (lado direito) - coord V
-			const float Phi = glm::mix(0.0f, TwoPi, U); // Interpolação linear para obter um Theta entre 0 e 2PI
+			const float Phi = glm::mix(0.0f, TwoPi, static_cast<float>(V)); // Interpolação linear para obter um Theta entre 0 e 2PI
 
 			glm::vec3 VertexPosition = {
 				glm::sin(Theta) * glm::cos(Phi),
@@ -323,12 +325,66 @@ void GenerateSphereMesh(GLuint Resolution, std::vector<Vertex>& Vertices) {
 			Vertex Vertex{
 				VertexPosition,
 				glm::vec3{ 1.0f, 1.0f, 1.0f }, // Branco, mas a cor não está sendo utilizada no momento
-				glm::vec2{ U, V }
+				glm::vec2{ 1.0f - U, V }
 			};
 
 			Vertices.push_back(Vertex); // Carrega no array enviado pelo parâmetro
 		}
 	}
+
+	for (GLuint U = 0; U < Resolution - 1; ++U) {
+		for (GLuint V = 0; V < Resolution - 1; ++V) { // Indexando os pontos que formam os quads (e triângulos) da malha
+													  // que irão compor a esfera
+			GLuint P0 = U + V * Resolution;
+			GLuint P1 = (U + 1) + V * Resolution;
+			GLuint P2 = (U + 1) + (V + 1) * Resolution;
+			GLuint P3 = U + (V + 1) * Resolution;
+
+			// O quad será formado por dois triângulos cortando a sua diagonal. Tendo (0,0) como origem, os pontos ficariam:
+			// Primeiro triângulo: (0, 0), (1,0) e (0,1)
+			// Segundo triângulo: (0,1), (1,0) e (1,1)
+			// Observar que assim é possível reaproveitar vértices de um quad para outro, otimizando o modelo
+			Indices.push_back(glm::ivec3{ P0, P1, P3 }); 
+			Indices.push_back(glm::ivec3{ P3, P1, P2 });
+		}
+	}
+}
+
+// Função para carregar a geometria da esfera
+GLuint LoadSphere(GLuint& NumVertices, GLuint& NumIndices) {
+	std::vector<Vertex> Vertices;
+	std::vector<glm::ivec3> Triangles; // Índices das coordenadas dos triângulos que formam os quads da malha da esfera
+	
+	GenerateSphereMesh(50, Vertices, Triangles);
+
+	NumVertices = Vertices.size();
+	NumIndices = Triangles.size() * 3; // Multiplicado por três, pois cada elemento possui 3 índices de vértices
+
+	// Daqui para baixo apenas repetições de comandos para copiar a geometria da esfera da CPU para a GPU
+	GLuint ElementBuffer; // EBO
+	glGenBuffers(1, &ElementBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, NumIndices * sizeof(GLuint), Triangles.data(), GL_STATIC_DRAW);
+
+	GLuint VertexBuffer;
+	glGenBuffers(1, &VertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), Vertices.data(), GL_STATIC_DRAW);
+
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBuffer);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, Color)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, UV)));
+	glBindVertexArray(0);
+
+	return VAO;
 }
 
 class FlyCamera {
@@ -420,6 +476,16 @@ void MouseMotionCallback(GLFWwindow* Window, double X, double Y) {
 	}
 }
 
+// Função callback para redimensionar o modelo conforme a janela mudar
+void Resize(GLFWwindow* Window, int NewWidth, int NewHeight) {
+	Width = NewWidth;
+	Height = NewHeight;
+
+	Camera.AspectRatio = static_cast<float>(Width) / Height;
+
+	glViewport(0, 0, Width, Height); // Função do OepnGL que retorna o tamanho da janela que estamos utilizando
+}
+
 int main() {
 
 	assert(glfwInit() == GLFW_TRUE); // Caso dê problema de inicialização com a biblioteca GLFW será sinalizado com um false
@@ -433,6 +499,7 @@ int main() {
 	// Cadastrar as callbacks no GLFW
 	glfwSetMouseButtonCallback(Window, MouseButtonCallback);
 	glfwSetCursorPosCallback(Window, MouseMotionCallback);
+	glfwSetFramebufferSizeCallback(Window, Resize);
 	
 	// Ativa o contexto criado na janela Window:
 	//	Associa um objeto GLFW a um contexto, para que o GLEW possa inicializar com referência para esse contexto
@@ -459,19 +526,27 @@ int main() {
 	std::cout << "GLSL   Version : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;// Versão da linguagem de shader
 	std::cout << std::endl;
 
+	// Ajusta a imagem da esfera para sua primeira renderização arredondada (resize corrige o aspect ratio)
+	Resize(Window, Width, Height);
+
 	GLuint ProgramId = LoadShaders("shaders/triangle_vert.glsl", "shaders/triangle_frag.glsl");
-	//GLuint TextureId = LoadTexture("textures/earth_2k.jpg");
-	GLuint TextureId = LoadTexture("textures/earth5400x2700.jpg");
+	GLuint TextureId = LoadTexture("textures/earth_2k.jpg");
+	//GLuint TextureId = LoadTexture("textures/earth5400x2700.jpg");
 
 	GLuint QuadVAO = LoadGeometry();
+
+	GLuint SphereNumVertices = 0;
+	GLuint SphereNumIndices = 0;
+	GLuint SphereVAO = LoadSphere(SphereNumVertices, SphereNumIndices);
 	
-	// Model Matrix - identidade
-	glm::mat4 ModelMatrix = glm::identity<glm::mat4>(); 
+	// Model Matrix - identidade rotacionada
+	glm::mat4 Identity = glm::identity<glm::mat4>(); 
+	glm::mat4 ModelMatrix = glm::rotate(Identity, glm::radians(90.0f), glm::vec3{ 1, 1, 0 });
 
 	// Ter em mente que o OpenGL é uma máquina de estados (quando ativarmos algo, essa coisa permanecerá ativa por padrão)
 	// Definir a cor do fundo (isso é um estado, o driver armazenará essa informação:
 	//	Sempre que precisarmos retomar essa informação, limparmos o framebuffer, etc, essa estado será devidamente restaurado)
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // RGBAlpha
+	glClearColor(0.2f, 0.2f, 0.2f, 0.8f); // RGBAlpha
 
 	// Armazenamento do frame anterior
 	double PreviousTime = glfwGetTime();
@@ -515,17 +590,18 @@ int main() {
 		GLint TextureSamplerLoc = glGetUniformLocation(ProgramId, "TextureSampler");
 		glUniform1i(TextureSamplerLoc, 0); // Em que 0 está identificando o ID do uniforme (GL_TEXTURE0)
 
-		glBindVertexArray(QuadVAO);
+		//glBindVertexArray(QuadVAO);
+		glBindVertexArray(SphereVAO);
 
-		// Desenha em tela de acordo com os arrays atrelados ao buffer de dados (VertexBuffer), interpretando-os como 
-		// coordenadas normalizadas. Especificamos o tipo pela constante do OpenGL (triângulos), dizemos qual é o ponto de 
-		// origem (0) e especificamos a quantidade de vértices que a estrutura possui (3)
-		//glDrawArrays(GL_TRIANGLES, 0, Quad.size()); 
+		// Para testes de geometrias:
+		glPointSize(3.0f);
+		glLineWidth(3.0f);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glDrawArrays(GL_POINTS, 0, SphereNumVertices);
 
 		// Utiliza o EBO para desenhar na tela de acordo com os índices
-		// Índices.size() retorna 2 por ser um array, sendo multiplicado por 3 dado que a geometria é triangular para 
-		//	resultar a quantidade de vértices correta para realização da chamada
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, SphereNumIndices, GL_UNSIGNED_INT, nullptr);
+		
 
 		// Boa prática em OpenGL: como ele se comporta como uma máquina de estados, após habilitar o buffer, 
 		//	definir um contexto e desenhar coisas em tela, reverter o que foi criado para que as próximas construções
