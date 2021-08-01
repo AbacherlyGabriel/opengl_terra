@@ -1,0 +1,5 @@
+C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/CMakeFiles/BlueMarble.dir
+C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/CMakeFiles/Vetores.dir
+C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/CMakeFiles/Matrizes.dir
+C:/Users/Raphael/Documents/Rapha/USP/7 - SEMESTRE/Computacao Grafica/Trabalho/27.+Nuvens/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,16 @@
+# ninja log v5
+26	1218	6493321449723013	CMakeFiles/BlueMarble.dir/Camera.cpp.obj	7b003cef5925e0cb
+82	1416	6493321451759734	CMakeFiles/Matrizes.dir/Matrizes.cpp.obj	8de8ba25b7382751
+1656	2431	6493326504316991	BlueMarble.exe	8766ca2215b01562
+5	1655	6493326500584139	CMakeFiles/BlueMarble.dir/main.cpp.obj	c78893cde6f8afce
+1417	2124	6493321458692690	Matrizes.exe	1cb42ad0393aff9f
+64	1206	6493322392023697	Vetores.exe	42bafe42eca304ca
+2	3252	6493321470068503	CMakeFiles/Vetores.dir/Vetores.cpp.obj	ffa60042c835a982
+3	2094	6493328391362370	CMakeFiles/BlueMarble.dir/main.cpp.obj	c78893cde6f8afce
+2096	2814	6493328394452620	BlueMarble.exe	8766ca2215b01562
+3	2026	6493337589056587	CMakeFiles/BlueMarble.dir/main.cpp.obj	c78893cde6f8afce
+2027	2949	6493337592799008	BlueMarble.exe	8766ca2215b01562
+6	2099	6493363203518016	CMakeFiles/BlueMarble.dir/main.cpp.obj	c78893cde6f8afce
+2100	2773	6493363206357785	BlueMarble.exe	8766ca2215b01562
+4	1951	6493371154380375	CMakeFiles/BlueMarble.dir/main.cpp.obj	c78893cde6f8afce
+1952	2745	6493371158102542	BlueMarble.exe	8766ca2215b01562

@@ -1,0 +1,4 @@
+glew-2.1.0
+glfw-3.3.4.bin.WIN64
+glm
+stb-master
