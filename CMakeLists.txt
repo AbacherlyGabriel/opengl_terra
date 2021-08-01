@@ -24,8 +24,8 @@ add_custom_command(TARGET BlueMarble POST_BUILD
 				   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/textures/earth_clouds_2k.jpg" "${CMAKE_BINARY_DIR}/textures/earth_clouds_2k.jpg"
                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/textures/earth5400x2700.jpg" "${CMAKE_BINARY_DIR}/textures/earth5400x2700.jpg")
 
-add_executable(Vetores Vetores.cpp)
+add_executable(Vetores Vectors.cpp)
 target_include_directories(Vetores PRIVATE deps/glm)
 
-add_executable(Matrizes Matrizes.cpp)
+add_executable(Matrizes Matrices.cpp)
 target_include_directories(Matrizes PRIVATE deps/glm)
